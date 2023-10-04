@@ -6,14 +6,14 @@ from . import trainer
 from django.utils import timezone
 
 
-openai_api_key = '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'
+openai_api_key = trainer.api_key()
 openai.api_key = openai_api_key
 
 def ask_openai(message):
     response = openai.ChatCompletion.create(
         model = "gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": trainer.site_texas()},
+            {"role": "system", "content": trainer.texax_info()},
             {"role": "user", "content": message},
         ]
     )
