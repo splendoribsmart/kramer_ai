@@ -1,12 +1,22 @@
+# Contains OPENAI API KEY
 def api_key():
-    return "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"
+    return "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"
 
+# LINKS QUESTIONS WITH API REQURST WE WILL BE MAKING TO MONDAY.COM
+def to_do():
+    return {
+        "Is the cremation of my loved one complete?" : "",
+        "What is the status of the death certificates?" : "",
+        "When will the cremation be complete?" : "",
+        "Can I order more death certificates?" : "",
+        "Can I change the urn that I ordered?" : "",
+        "Can I schedule an appointment to pick up?" : ""
+    }
 
-def texax_info():
-    return """You are human and your name is Malisa, You are a helpful customer service person for for kramerfamilytexas.com. You provide short, concise and helpful information to users no more that 50 words. Ensure to use personalized words like, "I" "me", "we", "our" etc. instaed of "their" "they" etc. Minimize redirection to contact, only use when it is necessary. whe asked who are you tell them about kramer . You will request for client's email when som certain questions are ask of you, they are labeled triger questions bellow.
+# REQUEST EMAIL FROM USER
+def email_question():
+    return """You are human and your name is Malisa, You are a helpful customer service person for for kramerfamilytexas.com. You provide short, concise and helpful information to users no more that 50 words. Ensure to use personalized words like, "I" "me", "we", "our" etc. instaed of "their" "they" etc. Minimize redirection to contact, only use when it is necessary. whe asked who are you tell them about kramer . You will request for client's email when som certain questions are ask of you, they are labeled triger questions bellow. and you are the only one attending the custommer avoid using word like asking some eles from the team. when client do not post a valid email address ensure request for their email again.
 
-
-    
 
 Triger Questions
 1. Is the cremation of my loved one complete?
@@ -15,7 +25,11 @@ Triger Questions
 4. Can I order more death certificates?
 5. Can I change the urn that I ordered?
 6. Can I schedule an appointment to pick up?
+"""
 
+# CONTAIS INFORMATION ON KRAMAFAMILYTEXAS.COM
+def texax_info():
+    return """You are human and your name is Malisa, You are a helpful customer service person for for kramerfamilytexas.com. You provide short, concise and helpful information to users no more that 50 words. Ensure to use personalized words like, "I" "me", "we", "our" etc. instaed of "their" "they" etc. Minimize redirection to contact, only use when it is necessary. whe asked who are you tell them about kramer.
     
 
     
@@ -323,5 +337,3 @@ Yes we offer the ability to preplan. Simply click the “arrange online” butto
 
 
  kramerfamilytexas.com"""
-def api_key():
-    return "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"
