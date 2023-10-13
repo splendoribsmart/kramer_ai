@@ -20,7 +20,9 @@ def similarity_ai(message):
     response = openai.ChatCompletion.create(
         model = "gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": '''you are a very very layperson, you are more human. you are cutomers srevice person and you are asked questions which you\'d check if the relate to or are simillar to any of the listed questions below but be sure to link highly identical questions together first. you respond with the exact question that the customers question is related or similar only the question nothing else attached, reply with just the qustion please remove numbering and if there are non related of similar you simpple respond with NO.
+            {"role": "system", "content": '''you are a very very layperson, you are more human. you are cutomers srevice person and you are asked questions which you\'d check if they are related to, thesame, or are simillar to any of the listed questions below but be sure to link highly identical questions together first. you respond with the exact question that the customers question is related, thesame or similar only the question nothing else attached, reply with just the qustion please remove numbering and if there are non related of similar you simpple respond with NO. 
+             
+            Note that and be very careful not to mistake "Is cremation of my loved one complete?" with "When will the cremation be complete?" for each other, they are two different questions.
 QUESTIONS
 Is the cremation of my loved one complete?
 What is the status of the death certificates?
@@ -144,7 +146,7 @@ def status_check(email):
     cremation_complete_time = b['data']['items_by_column_values'][0]['column_values'][36]['text']
     more_death_certificate = 'Additional death certificates can be ordered online by clicking on this link: https://ovra.txapps.texas.gov/ovra/order-death-certificate'
     check_email = b['data']['items_by_column_values'][0]['column_values'][5]['text']
-    appointment = b['data']['items_by_column_values'][0]['column_values'][8]['text']
+    appointment = b['data']['items_by_column_values'][0]['column_values'][86]['text']
 
     # print(death_certificate)
 
@@ -173,18 +175,36 @@ def status_check(email):
             else:
                 return cremation_status
 
-        elif choice_question[0:10] is myQuestions[1][0:10]:
-            return death_certificate
-        elif choice_question[0:10] is myQuestions[2][0:10]:
-            return cremation_complete_time
-        elif choice_question[0:10] is myQuestions[3][0:10]:
+        elif choice_question[0:10] == myQuestions[1][0:10]:
+            print("Death Certificate: ", death_certificate)
+            if death_certificate == 'Family Submitted Vitals':
+                return "Vital information have been submitted by the family."
+            else:
+                return "The family have not submit vital information"
+        elif choice_question[0:10] == myQuestions[2][0:10]:
+            print("cremation completion: ", cremation_complete_time)
+            if cremation_complete_time == "":
+                return "The cremation of your loved one has been completed"
+            else:
+                return f"The cremation is sheduled to occurr on {cremation_complete_time}"
+        elif choice_question[0:10] == myQuestions[3][0:10]:
+            print("More Death Certificate: ", more_death_certificate)
             return more_death_certificate
-        elif choice_question[0:10] is myQuestions[4][0:10]:
+        elif choice_question[0:10] == myQuestions[4][0:10]:
+            print("urn: ", check_email)
             if check_email:
                 return "Yes you can. When we notify you that everything is ready to be returned, please schedule an appointment. During your appointment you can make any changes you need in person."
             else:
                 return "We couldn't locate your information in our database, so it appears you may not be an existing customer."
-        elif choice_question[0:10] is myQuestions[5][0:10]:
+        elif choice_question[0:10] == myQuestions[5][0:10]:
+            print("Book Appointment: ", appointment)
+
+            if appointment == 'KC to Mail':
+                return 'Urn is in the process of being mailed'
+            elif appointment == 'KC Return Approved':
+                return "Urn is ready to be returned"
+            else:
+                'Urn is has not being processed'
             return appointment
     
     # comback

@@ -1,6 +1,6 @@
 # Contains OPENAI API KEY
 def api_key():
-    return "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"
+    return "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"
 
 # LINKS QUESTIONS WITH API REQURST WE WILL BE MAKING TO MONDAY.COM
 def to_do():
