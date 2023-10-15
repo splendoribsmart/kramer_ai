@@ -9,6 +9,8 @@ from django.utils import timezone
 import requests
 import json
 
+import time
+
 
 # GOLBAL FOR VARIABLES
 openai_api_key = trainer.api_key() #"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"
@@ -20,16 +22,29 @@ def similarity_ai(message):
     response = openai.ChatCompletion.create(
         model = "gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": '''you are a very very layperson, you are more human. you are cutomers srevice person and you are asked questions which you\'d check if they are related to, thesame, or are simillar to any of the listed questions below but be sure to link highly identical questions together first. you respond with the exact question that the customers question is related, thesame or similar only the question nothing else attached, reply with just the qustion please remove numbering and if there are non related of similar you simpple respond with NO. 
-             
-            Note that and be very careful not to mistake "Is cremation of my loved one complete?" with "When will the cremation be complete?" for each other, they are two different questions.
-QUESTIONS
+            {"role": "system", "content": '''Role Prompt:
+
+You are a customer service representative, and your role is to respond to customer inquiries related to specific questions. Your goal is to identify if the customer's question is the same or similar to any of the listed questions provided below. If it is, respond with the exact question from the list. If the customer's question is not related or similar to any of the listed questions, respond with "NO." Make sure to differentiate between similar but distinct questions, such as "Is the cremation of my loved one complete?" and "When will the cremation be complete?" These are two different questions.
+
+List of Questions:
+
 Is the cremation of my loved one complete?
 What is the status of the death certificates?
 When will the cremation be complete?
 Can I order more death certificates?
 Can I change the urn that I ordered?
-Can I schedule an appointment to pick up?'''
+Can I schedule an appointment to pick up?
+Response Guidelines:
+
+If the customer's question exactly matches one of the listed questions, respond with the matching question without any additional information.
+
+If the customer's question is similar but not exactly the same, and it matches one of the listed questions, respond with the matching question. Be careful to differentiate between questions that may seem similar but have different meanings, such as the examples you mentioned ("Is the cremation of my loved one complete?" vs. "When will the cremation be complete?").
+             
+If customers request for status of cremation respond with "Is the cremation of my loved one complete?"
+             
+If customer want to get or order for death certificate respond with "Can I order more death certificates?"
+
+If the customer's question does not match any of the listed questions, respond with "NO." '''
              },
 
             {"role": "user", "content": message},
@@ -144,7 +159,7 @@ def status_check(email):
     cremation_status = b['data']['items_by_column_values'][0]['column_values'][7]['text']
     death_certificate = b['data']['items_by_column_values'][0]['column_values'][8]['text']
     cremation_complete_time = b['data']['items_by_column_values'][0]['column_values'][36]['text']
-    more_death_certificate = 'Additional death certificates can be ordered online by clicking on this link: https://ovra.txapps.texas.gov/ovra/order-death-certificate'
+    more_death_certificate = 'Additional death certificates can be ordered online by clicking on this link: <a href="https://ovra.txapps.texas.gov/ovra/order-death-certificate" target="blank">https://ovra.txapps.texas.gov/ovra/order-death-certificate</a>'
     check_email = b['data']['items_by_column_values'][0]['column_values'][5]['text']
     appointment = b['data']['items_by_column_values'][0]['column_values'][86]['text']
 
@@ -251,9 +266,14 @@ def chatbot(request):
             print(f"{email} is not a valid email address.")
             # response = "We couldn't locate your information in our database, so it appears you may not be an existing customer."
 
-            if message[-1] == '?':
-                new_message = similarity_ai(message) #my_content
+            check_similarity = similarity_ai(message)
+
+            if check_similarity != "NO.":
+                # time.sleep(10)
+                new_message = check_similarity #my_content
                 print("New Message: ", new_message)
+
+                # time.sleep(10)
 
                 response = email_reuests(new_message)
                 global choice_question

@@ -75,6 +75,19 @@
     .title img {
       max-width: 150px;
     }
+
+    .typing-indicator {
+      font-style: italic;
+      color: #aaa; /* Set the color you want for the indicator */
+      animation: typing 1s infinite;
+    }
+
+    @keyframes typing {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+
   </style>
 {% endblock %}
 
@@ -129,6 +142,81 @@
       return;
     }
 
+    // Add the user's message to the chat history
+    const userMessageItem = document.createElement('li');
+    userMessageItem.classList.add('message', 'sent');
+    userMessageItem.innerHTML = `
+        <div class="message-text">
+            <div class="message-sender">
+                <b>You</b>
+            </div>
+            <div class="message-content">
+                ${message}
+            </div>
+        </div>`;
+    messagesList.appendChild(userMessageItem);
+
+    // Clear the input field
+    messageInput.value = '';
+
+    // Add the typing indicator
+    const typingIndicator = document.createElement('li');
+    typingIndicator.classList.add('message', 'received', 'typing-indicator');
+    typingIndicator.innerHTML = `
+        <div class="message-text">
+            <div class="message-sender">
+                <b>Malisa</b>
+            </div>
+            <div class="message-content">
+                Typing...
+            </div>
+        </div>`;
+    messagesList.appendChild(typingIndicator);
+
+    fetch('', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        'message': message
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Remove the typing indicator
+        messagesList.removeChild(typingIndicator);
+
+        const response = data.response;
+        const messageItem = document.createElement('li');
+        messageItem.classList.add('message', 'received');
+        messageItem.innerHTML = `
+        <div class="message-text">
+            <div class="message-sender">
+              <b>Malisa</b>
+            </div>
+            <div class="message-content">
+                ${response}
+            </div>
+        </div>
+          `;
+        messagesList.appendChild(messageItem);
+      });
+  });
+</script>
+
+<!-- <script>
+  const messagesList = document.querySelector('.messages-list');
+  const messageForm = document.querySelector('.message-form');
+  const messageInput = document.querySelector('.message-input');
+
+  messageForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const message = messageInput.value.trim();
+    if (message.length === 0) {
+      return;
+    }
+
     const messageItem = document.createElement('li');
     messageItem.classList.add('message', 'sent');
     messageItem.innerHTML = `
@@ -171,6 +259,6 @@
       });
   });
 
-</script>
+</script> -->
 
 {% endblock %}
